@@ -1,12 +1,11 @@
-#define _CRT_SECURE_NO_WARNINGS 1
-#include <cassert>
 #include<iostream>
 #include<math.h>
 #include<string.h>
 #include<stdlib.h>
 #include <cstdlib>
 #include <ctime>
-
+#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -15,12 +14,8 @@ char msg[100];
 int prime(long int);
 void ce();
 long int cd(long int);
-void encrypt();
-void decrypt();
-long Test();
-void run_tests();
-void run_rsa();
-
+void encrypt(bool test = false);
+void decrypt(bool test = false);
 int prime(long int pr)
 {
     int i;
@@ -32,20 +27,41 @@ int prime(long int pr)
     }
     return 1;
 }
-int main()
-{
-    run_rsa();
-    //run_tests();
-    return 0;
+bool run_tests() {
+    vector<string> tests = {
+        "test 1",
+        "abracadabra"
+    };
+    for (const auto& word : tests) {
+        for (i = 0; i < word.length(); i++) {
+            m[i] = word[i];
+        }
+        n = p * q;
+        t = (p - 1) * (q - 1);
+        ce();
+        encrypt(true);
+        decrypt(true);
+        for (i = 0; m[i] != -1; i++) {
+            if (m[i] != word[i]) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
-
-void run_rsa()
+int main()
 {
     srand(time(0));
     while (prime(p = rand() % 100) == 0) {}
     while (prime(q = rand() % 100) == 0 || p == q) {}
+    if (!run_tests()) {
+        cout << "\nTESTS NOT PASSED\n";
+        return 0;
+    }
+    else {
+        cout << "\nTESTS PASSED\n";
+    }
     cout << "\nENTER MESSAGE\n";
-    cout << "\n";
     fflush(stdin);
     cin.getline(msg, 100);
     for (i = 0; msg[i] != '\0'; i++)
@@ -55,8 +71,8 @@ void run_rsa()
     ce();
     encrypt();
     decrypt();
+    return 0;
 }
-
 void ce()
 {
     int k;
@@ -90,10 +106,9 @@ long int cd(long int x)
             return (k / x);
     }
 }
-void encrypt()
+void encrypt(bool test)
 {
     long int pt, ct, key = e[0], k, len;
-    char* result = nullptr;
     i = 0;
     len = strlen(msg);
     while (i != len)
@@ -112,13 +127,13 @@ void encrypt()
         i++;
     }
     en[i] = -1;
-    cout << "\nTHE ENCRYPTED MESSAGE IS\n";
+    if (!test) {
+        cout << "\nTHE ENCRYPTED MESSAGE IS\n";
+    }
     for (i = 0; en[i] != -1; i++)
         printf("%c", en[i]);
-    cout << "\n";
-
 }
-void decrypt()
+void decrypt(bool test)
 {
     long int pt, ct, key = d[0], k;
     i = 0;
@@ -136,42 +151,10 @@ void decrypt()
         i++;
     }
     m[i] = -1;
-    cout << "\nTHE DECRYPTED MESSAGE IS\n";
+    if (!test) {
+        cout << "\nTHE DECRYPTED MESSAGE IS\n";
+    }
     for (i = 0; m[i] != -1; i++)
         printf("%c", m[i]);
-    cout << "\n";
 }
-
-char* Test(char msg[100])
-{
-    srand(time(0));
-    while (prime(p = rand() % 100) == 0) {}
-    while (prime(q = rand() % 100) == 0 || p == q) {}
-    for (i = 0; msg[i] != '\0'; i++)
-        m[i] = msg[i];
-    n = p * q;
-    t = (p - 1) * (q - 1);
-    ce();
-    encrypt();
-    decrypt();
-
-    char result[100];
-    for (i = 0; m[i] != '\0'; i++)
-    {
-        result[i] = char(m[i]);
-    }
-    return result;
-}
-
-void run_tests()
-{
-    char first_msg[100] = "It's a good Test";
-    char second_msg[100] = "My name is Maks";
-    char third_msg[100] = "I love Ruby";
-
-    assert(Test(first_msg) == first_msg);
-    assert(Test(second_msg) == second_msg);
-    assert(Test(third_msg) == third_msg);
-}
-
 
